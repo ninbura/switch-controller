@@ -23,6 +23,6 @@ _setup_log()
 def log(msg: str) -> None:
     try:
         with open(_LOG_PATH, "a") as f:
-            f.write(f"[ip-switch] {msg}\n")
+            f.write(f"[switch-controller] {msg}\n")
     except Exception:
         pass
