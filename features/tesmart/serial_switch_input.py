@@ -1,4 +1,5 @@
 import os
+import os.path
 import sys
 import traceback
 from typing import Optional
@@ -24,7 +25,7 @@ except ImportError:
     def _get_available_ports() -> list[tuple[str, str]]:
         return []
 
-DEFAULT_SERIAL_PORT = ""
+DEFAULT_SERIAL_PORT = "/dev/ttyAMA0"
 DEFAULT_INPUT = 1
 MAX_INPUTS = 16
 DEFAULT_LABEL_SIZE = 20
@@ -101,7 +102,8 @@ class TESmartSerialSwitchInput(ActionBase):
 
         if saved_port and saved_port not in port_paths:
             port_paths.insert(0, saved_port)
-            port_labels.insert(0, f"{saved_port} (not connected)")
+            label = saved_port if os.path.exists(saved_port) else f"{saved_port} (not connected)"
+            port_labels.insert(0, label)
 
         if not saved_port and port_paths:
             saved_port = port_paths[0]

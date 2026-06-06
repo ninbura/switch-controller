@@ -12,9 +12,11 @@ from ...shared.logger import log as _log
 RECONNECT_DELAY = 2
 SWITCH_TIMEOUT = 3
 READ_TIMEOUT = 1
-FEEDBACK_OPCODE = 0x11
 PACKET_HEADER = (0xAA, 0xBB)
-PACKET_LENGTH = 6
+PACKET_HEADER_BYTES = bytes(PACKET_HEADER)
+PACKET_LENGTH = 7
+FEEDBACK_OPCODE = 0x83  # "correspondence between monitors and PCs" — also used for unsolicited change notifications
+QUERY_CURRENT_INPUT = bytes([0xAA, 0xBB, 0x83, 0x00, 0xFF, 0xE7])
 
 def _build_switch_packet(input_number: int) -> bytes:
     n = input_number - 1  # 0-indexed on wire per UART docs
@@ -98,6 +100,12 @@ class TESmartSerialClient:
                 time.sleep(RECONNECT_DELAY)
 
     def _listen(self, ser: "serial.Serial") -> None:
+        try:
+            ser.write(QUERY_CURRENT_INPUT)
+            ser.flush()
+        except Exception as e:
+            _log(f"tesmart serial initial query failed: {e}")
+
         buffer = b""
         while self._running:
             try:
@@ -115,16 +123,23 @@ class TESmartSerialClient:
             except Exception:
                 pass
             while len(buffer) >= PACKET_LENGTH:
+                header_pos = buffer.find(PACKET_HEADER_BYTES)
+                if header_pos == -1:
+                    buffer = buffer[-(PACKET_LENGTH - 1):]
+                    break
+                if header_pos > 0:
+                    buffer = buffer[header_pos:]
+                    continue
                 self._handle_packet(buffer[:PACKET_LENGTH])
                 buffer = buffer[PACKET_LENGTH:]
 
     def _handle_packet(self, packet: bytes) -> None:
         if packet[0] != PACKET_HEADER[0] or packet[1] != PACKET_HEADER[1]:
             return
-        if packet[3] != FEEDBACK_OPCODE:
+        if packet[2] != FEEDBACK_OPCODE:
             return
 
-        raw_input = packet[4] + 1  # 0-indexed in protocol, 1-indexed everywhere else
+        raw_input = packet[5] + 1  # 0-indexed in protocol, 1-indexed everywhere else
 
         with self._pending_lock:
             pending = self._pending_switch
