@@ -1,6 +1,6 @@
-# IP Switch Controller
+# Switch Controller
 
-A [StreamController](https://github.com/StreamController/StreamController) plugin for controlling IP-connected signal switchers. The intended scope is input switching, not full device configuration. For anything beyond that, I would suggest using the manufacturer's first-party software.
+A [StreamController](https://github.com/StreamController/StreamController) plugin for controlling signal switchers. The intended scope is input switching, not full device configuration. For anything beyond that, I would suggest using the manufacturer's first-party software.
 
 ## Supported Devices
 
@@ -24,7 +24,7 @@ Clone into your StreamController plugins directory:
 cd ~/.var/app/com.core447.StreamController/data/plugins
 ```
 ```bash
-git clone https://github.com/ninbura/ip-switch-controller
+git clone https://github.com/ninbura/switch-controller
 ```
 
 ### Serial Port Setup
