@@ -5,16 +5,17 @@ A [StreamController](https://github.com/StreamController/StreamController) plugi
 ## Supported Devices
 
 ### TESmart
-All IP-connected TESmart switches should work. Tested on:
-- TESmart 8-Port 4K60 HDMI Switch (HSW801-E23)
+IP and serial (UART) control. Tested on:
+- TESmart 4-Port 4K60 HDMI KVM Switch (serial)
+- TESmart 8-Port 4K60 HDMI Switch (HSW801-E23, IP)
 
 ### HDFury
-All IP-connected HDFury switches should work. Tested on:
+IP control. Tested on:
 - HDFury VRROOM
 
 ## Usage
 
-Add a **TESmart: Switch Input** or **HDFury: Switch Input** action to a button. Configure the IP address and which input to switch to. The button highlights when that input is active.
+Add a **TESmart: Switch Input (IP)**, **TESmart: Switch Input (Serial)**, or **HDFury: Switch Input (IP)** action to a button. Configure the connection details and which input to switch to. The button highlights when that input is active.
 
 ## Development Setup
 
